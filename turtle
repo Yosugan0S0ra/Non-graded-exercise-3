@@ -1,0 +1,82 @@
+import random
+import tkinter as tk
+from scipy.spatial.distance import cityblock
+
+def draw_chessboard(canvas, size, cell_size):
+    for row in range(size):
+        for col in range(size):
+            x1 = col * cell_size
+            y1 = row * cell_size
+            x2 = x1 + cell_size
+            y2 = y1 + cell_size
+            canvas.create_rectangle(x1, y1, x2, y2)
+
+def draw_chess(canvas, pos, cell_size):
+    x, y = pos
+    x1 = y * cell_size + 10
+    y1 = x * cell_size + 10
+    x2 = x1 + cell_size - 20
+    y2 = y1 + cell_size - 20
+    canvas.create_oval(x1, y1, x2, y2, fill="red", tags="chess_piece")
+
+
+def move(direction):
+    global game_end, dt_start
+    x, y = game_end
+    if direction == "N" and x > 0:
+        game_end = (x - 1, y)
+    elif direction == "S" and x < size - 1:
+        game_end = (x + 1, y)
+    elif direction == "W" and y > 0:
+        game_end = (x, y - 1)
+    elif direction == "E" and y < size - 1:
+        game_end = (x, y + 1)
+    else:
+        print("Move out of bounds, Returning to previous position")
+        return
+    update_game()
+
+def distance(a, b):
+    return cityblock(a, b)
+
+def update_game():
+    global dt_start, dt_end, salary_end, game_end,count
+    count +=1
+    dt_end = distance(game_end, salary_end)
+    if dt_end < dt_start:
+        print("Good choice, closer")
+    else:
+        print("Bad choice, farther")
+    dt_start = dt_end
+    canvas.delete("chess_piece")
+    draw_chess(canvas, game_end, cell_size)
+    print("your step:%i"%(count))
+    if salary_end == game_end:
+        print("You found the salary! Game over.")
+        root.quit()
+
+
+root = tk.Tk()
+
+canvas = tk.Canvas(root, width=400, height=400)
+canvas.pack()
+size = random.randint(5, 12)
+cell_size = 50
+count = 0 
+salary_start = (random.randint(0, size - 1), random.randint(0, size - 1))
+game_start = (random.randint(0, size - 1), random.randint(0, size - 1))
+salary_end = salary_start
+game_end = game_start
+
+draw_chessboard(canvas, size, cell_size)
+chess = draw_chess(canvas, game_end, cell_size)
+
+dt_start = distance(game_end, salary_end)
+print(f"Initial distance: {dt_start}")
+
+root.bind("<Up>", lambda event: move("N"))
+root.bind("<Down>", lambda event: move("S"))
+root.bind("<Left>", lambda event: move("W"))
+root.bind("<Right>", lambda event: move("E"))
+
+root.mainloop()

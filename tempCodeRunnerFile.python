@@ -1,0 +1,4 @@
+
+p2 = (10, 2)
+
+res = euclidean(p1, p2)
