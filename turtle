@@ -32,7 +32,7 @@ def move(direction):
     elif direction == "E" and y < size - 1:
         game_end = (x, y + 1)
     else:
-        print("Move out of bounds, Returning to previous position")
+        print("Move out of bounds, Returning to previous position.")
         return
     update_game()
 
@@ -40,8 +40,8 @@ def distance(a, b):
     return cityblock(a, b)
 
 def update_game():
-    global dt_start, dt_end, salary_end, game_end,count
-    count +=1
+    global dt_start, dt_end, salary_end, game_end, count
+    count += 1
     dt_end = distance(game_end, salary_end)
     if dt_end < dt_start:
         print("Good choice, closer")
@@ -50,26 +50,29 @@ def update_game():
     dt_start = dt_end
     canvas.delete("chess_piece")
     draw_chess(canvas, game_end, cell_size)
-    print("your step:%i"%(count))
+    print("your step: %i" % count)
     if salary_end == game_end:
         print("You found the salary! Game over.")
         root.quit()
 
 
 root = tk.Tk()
-
-canvas = tk.Canvas(root, width=400, height=400)
-canvas.pack()
-size = random.randint(5, 12)
+size = random.randint(5, 20)
 cell_size = 50
-count = 0 
+
+canvas_width = size * cell_size
+canvas_height = size * cell_size
+canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
+canvas.pack()
+
+count = 0
 salary_start = (random.randint(0, size - 1), random.randint(0, size - 1))
 game_start = (random.randint(0, size - 1), random.randint(0, size - 1))
 salary_end = salary_start
 game_end = game_start
 
 draw_chessboard(canvas, size, cell_size)
-chess = draw_chess(canvas, game_end, cell_size)
+draw_chess(canvas, game_end, cell_size)
 
 dt_start = distance(game_end, salary_end)
 print(f"Initial distance: {dt_start}")
